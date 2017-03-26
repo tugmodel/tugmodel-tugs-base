@@ -1,0 +1,16 @@
+{
+    "@c": "com.tugmodel.client.model.Model",
+    "id": "Address",
+    "attributes": [{
+            "id": "city",
+            "dataType": {
+                "id": "String"
+            }
+        }, {
+            "id": "street",
+            "dataType": {
+                "id": "String"
+            }
+        }
+    ]
+}

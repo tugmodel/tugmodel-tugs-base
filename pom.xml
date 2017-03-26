@@ -36,6 +36,11 @@
 			<groupId>com.tugmodel</groupId>
 			<artifactId>tugmodel-client</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.tugmodel</groupId>
+			<artifactId>tugmodel-mappers-jackson</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>cglib</groupId>

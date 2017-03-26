@@ -30,78 +30,88 @@ import net.sf.cglib.proxy.MethodProxy;
  * https://github.com/edc4it/jpa-case/blob/master/src/main/java/util/JPAUtil.java
  */
 public class ProxyUtil {
-	// Should be populated with information from Config model.
-	private static final Map<String, Object> PROXY_REGISTRY = new HashMap();
+    // Should be populated with information from Config model.
+    private static final Map<String, Object> PROXY_REGISTRY = new HashMap();
 
-	/**
-	 * Returns the implementation of a tug id/ interface id.
-	 */
-	public static final Object getImpl(Class tugInterface) {
-		try {
-			String tugClass = tugInterface.getCanonicalName();
-			Object impl = PROXY_REGISTRY.get(tugClass);
-			if (impl == null) {
-				impl = Class.forName(tugClass + "Impl").newInstance();
-			}
-			return impl;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	/**
-	 * This can call a local or a remote implementation.
-	 */
-	public interface RpcProxy {
-		public Object execute(MethodProxy methodProxy, Object[] args) throws Throwable; 
-	}
-	/**
-	 * This should be a local(same process) proxy.
-	 */
-	public static class LocalRpcProxy implements RpcProxy {
-		protected Object target;
-		public LocalRpcProxy(Object target) {
-			this.target = target;
-		}
-		public Object execute(MethodProxy methodProxy, Object[] args) throws Throwable {
-			return methodProxy.invoke(target, args);
-		}
-	}
-//	/**
-//	 * This should be a Java RMI proxy.
-//	 */
-//	public static class RmiProxy implements RpcProxy{
-//		public Object execute(MethodProxy methodProxy, Object target, Object[] args) throws Throwable {
-//			return methodProxy.invoke(target, args);
-//		}
-//	}
+    /**
+     * Returns the implementation of a tug id/ interface id.
+     */
+    public static final Object getImpl(Class tugInterface) {
+        try {
+            String tugClass = tugInterface.getCanonicalName();
+            Object impl = PROXY_REGISTRY.get(tugClass);
+            if (impl == null) {
+                impl = Class.forName(tugClass + "Impl").newInstance();
+            }
+            return impl;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	/**
-	 * Provide an interface. The default proxy is  
-	 */
-	
-	public static <T> T getProxy(Class<T> tugInterface) {
-		TugInvocationHandler handler = new TugInvocationHandler(new LocalRpcProxy(getImpl(tugInterface)));
-		return (T)Enhancer.create(tugInterface, handler);
-	}
-	
-	public static class TugInvocationHandler implements MethodInterceptor {
-		
-		private RpcProxy rpcProxy; // Tug target.
+    /**
+     * This can call a local or a remote implementation.
+     */
+    public interface RpcProxy {
+        public Object execute(MethodProxy methodProxy, Object[] args) throws Throwable;
+    }
 
-		public TugInvocationHandler(RpcProxy target) {
-			this.rpcProxy = target;
-		}
+    /**
+     * This should be a local(same process) proxy.
+     */
+    public static class LocalRpcProxy implements RpcProxy {
+        protected Object target;
 
-		/**
-		 * @param obj "this", the enhanced object
-		 * @param method intercepted Method
-		 * @param args argument array; primitive types are wrapped
-		 * @param proxy used to invoke super (non-intercepted method); may be called as many times as needed
-		 */
-		public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-			System.out.println("inside proxy.");
-			//return proxy.invoke(target, args);
-			return rpcProxy.execute(proxy, args);
-		}
-	}
+        public LocalRpcProxy(Object target) {
+            this.target = target;
+        }
+
+        public Object execute(MethodProxy methodProxy, Object[] args) throws Throwable {
+            return methodProxy.invoke(target, args);
+        }
+    }
+    // /**
+    // * This should be a Java RMI proxy.
+    // */
+    // public static class RmiProxy implements RpcProxy{
+    // public Object execute(MethodProxy methodProxy, Object target, Object[]
+    // args) throws Throwable {
+    // return methodProxy.invoke(target, args);
+    // }
+    // }
+
+    /**
+     * Provide an interface. The default proxy is
+     */
+
+    public static <T> T getProxy(Class<T> tugInterface) {
+        TugInvocationHandler handler = new TugInvocationHandler(new LocalRpcProxy(getImpl(tugInterface)));
+        return (T) Enhancer.create(tugInterface, handler);
+    }
+
+    public static class TugInvocationHandler implements MethodInterceptor {
+
+        private RpcProxy rpcProxy; // Tug target.
+
+        public TugInvocationHandler(RpcProxy target) {
+            this.rpcProxy = target;
+        }
+
+        /**
+         * @param obj
+         *            "this", the enhanced object
+         * @param method
+         *            intercepted Method
+         * @param args
+         *            argument array; primitive types are wrapped
+         * @param proxy
+         *            used to invoke super (non-intercepted method); may be
+         *            called as many times as needed
+         */
+        public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+            System.out.println("inside proxy.");
+            // return proxy.invoke(target, args);
+            return rpcProxy.execute(proxy, args);
+        }
+    }
 }

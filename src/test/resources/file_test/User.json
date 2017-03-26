@@ -1,0 +1,16 @@
+{
+    "@c": "com.tugmodel.client.model.Model",
+    "id": "User",
+    "attributes": [{
+            "id": "surName",
+            "dataType": {
+                "id": "String"
+            }
+        }, {
+            "id": "firstName",
+            "dataType": {
+                "id": "String"
+            }
+        }
+    ]
+}

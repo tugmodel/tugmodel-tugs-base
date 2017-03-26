@@ -14,7 +14,7 @@
  */
 package com.tugmodel.tug.proxy;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 
@@ -32,72 +32,76 @@ import net.sf.cglib.proxy.MethodProxy;
  * 
  */
 public class TestBusinessTug {
-	
-	
-	public static class XModel extends Model<XModel> {
-		
-	}
-	public static class YModel extends Model<YModel> {
-		
-	}
-	
-	public static interface MyTug extends BusinessTug {
-		public void enable(XModel x, YModel y);
-	}
-	
-	public static class MyTugImpl implements MyTug {
 
-		public void enable(XModel x, YModel y) {
-			x.set("x1", 1);			
-			y.set("y1", 1);
-		}
+    public static class XModel extends Model<XModel> {
 
-		public TugConfig getConfig() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+    }
 
-		public BusinessTug setConfig(TugConfig config) {
-			// TODO Auto-generated method stub
-			return null;
-		}	
-		
-	}
-	
-	static class MyInvocationHandler implements MethodInterceptor {
-		
-		private MyTug target;
+    public static class YModel extends Model<YModel> {
 
-		public MyInvocationHandler(MyTug ary) {
-			this.target = ary;
-		}
+    }
 
-		/**
-		 * @param obj "this", the enhanced object
-		 * @param method intercepted Method
-		 * @param args argument array; primitive types are wrapped
-		 * @param proxy used to invoke super (non-intercepted method); may be called 
-		 * as many times as needed
-		 */
-		public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-			if (method.getName().equals("enable")) {
-				XModel x = (XModel)args[0];
-				x.set("setByProxy", true);
-				System.out.println("inside proxy.");
-			}
-			return proxy.invoke(target, args);
-		}
-	}
-	@Test
-	public void testRemoteBussinessTugViaProxy() {
-		
-		MyTug proxy = (MyTug)Enhancer.create(MyTug.class, new MyInvocationHandler(new MyTugImpl()));
-		XModel x = new XModel();
-		YModel y = new YModel();
-		proxy.enable(x, y);
-		
-		assertTrue(x.asBoolean("setByProxy") == true);
-		assertTrue(x.asInteger("x1") == 1);
-		
-	}
+    public static interface MyTug extends BusinessTug {
+        public void enable(XModel x, YModel y);
+    }
+
+    public static class MyTugImpl implements MyTug {
+
+        public void enable(XModel x, YModel y) {
+            x.set("x1", 1);
+            y.set("y1", 1);
+        }
+
+        public TugConfig getConfig() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public BusinessTug setConfig(TugConfig config) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+    }
+
+    static class MyInvocationHandler implements MethodInterceptor {
+
+        private MyTug target;
+
+        public MyInvocationHandler(MyTug ary) {
+            this.target = ary;
+        }
+
+        /**
+         * @param obj
+         *            "this", the enhanced object
+         * @param method
+         *            intercepted Method
+         * @param args
+         *            argument array; primitive types are wrapped
+         * @param proxy
+         *            used to invoke super (non-intercepted method); may be called as many times as needed
+         */
+        public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+            if (method.getName().equals("enable")) {
+                XModel x = (XModel) args[0];
+                x.set("setByProxy", true);
+                System.out.println("inside proxy.");
+            }
+            return proxy.invoke(target, args);
+        }
+    }
+
+    @Test
+    public void testRemoteBussinessTugViaProxy() {
+
+        MyTug proxy = (MyTug) Enhancer.create(MyTug.class, new MyInvocationHandler(new MyTugImpl()));
+        XModel x = new XModel();
+        YModel y = new YModel();
+        proxy.enable(x, y);
+
+        assertTrue(x.asBoolean("setByProxy") == true);
+        assertTrue(x.asInteger("x1") == 1);
+
+    }
 }

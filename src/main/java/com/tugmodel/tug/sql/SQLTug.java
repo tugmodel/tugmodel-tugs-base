@@ -95,13 +95,13 @@ public class SQLTug<M extends Model> extends BaseCrudTug<M> {
 			int i = 1;
 			// Make sure getters are called and objects are serialized to the tug underlying format.
 			// TODO: try mapper.serialize.
-			Mapper<Model> mr = this.getConfig().mapper();
+			Mapper<Model> mr = this.getConfig().getMapper();
 			Map values = mr.convert(model, Map.class);
 			for (Attribute a : meta.getAttributes()) {
 				ps.setObject(i++, values.get(a.getId()));				
 			}
 			Map extra = model.getExtraAttributes();
-			String extraAttrs = ((Mapper<? extends Model>)this.getConfig().mapper()).convert(extra, String.class);
+			String extraAttrs = ((Mapper<? extends Model>)this.getConfig().getMapper()).convert(extra, String.class);
 			ps.setObject(i++, extraAttrs);
 			
 			int n = ps.executeUpdate();
