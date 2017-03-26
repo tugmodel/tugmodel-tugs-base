@@ -14,15 +14,8 @@
  */
 package com.tugmodel.tug.config;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import com.tugmodel.client.mapper.jackson.JacksonMappers;
-import com.tugmodel.client.model.Model;
 import com.tugmodel.client.model.config.Config;
-import com.tugmodel.client.tug.BaseTug;
+import com.tugmodel.client.tug.BaseCrudTug;
 
 /**
  * Merges on the loaded file config the defaults config.
@@ -30,53 +23,53 @@ import com.tugmodel.client.tug.BaseTug;
  * 
  * 
  */
-public class ConfigTug<M extends Config> extends BaseTug<M> {
+public class ConfigTug<M extends Config> extends BaseCrudTug<M> {
 	
 //	public ConfigTug() {
 //		getConfig().setMapper(JacksonMappers.getConfigReaderMapper());
 //	}
 	
-	public M fetch(M model) {
-		
-		getConfig().getMapper().updateModel(readClasspathFile("/tugmodel/tugmodel-config-defaults.json"), model);
-		String customConfigRes = "tugmodel-config.json";
-		Model customConfig;
-		if (!resourceExists(customConfigRes)) {
-			customConfigRes = "/tugmodel/tugmodel-config.json";
-		}
-		if (resourceExists(customConfigRes)) {
-			customConfig = getConfig().getMapper().deserialize(readClasspathFile(customConfigRes));  // Model.class
-			getConfig().getMapper().updateModel(customConfig, model);
-		}	
-		
-		return model;
-	}
-
-	public boolean resourceExists(String name) {
-		return this.getClass().getResource(name) != null;
-	}
-	/**
-	 * Reads a file from the classpath.
-	 */
-	public String readClasspathFile(String path) {
-		// Take a look at https://github.com/spring-projects/spring-framework/blob/master/spring-core/src/main/java/org/springframework/core/io/support/PathMatchingResourcePatternResolver.java
-		StringBuilder sb = new StringBuilder();
-		try {
-			InputStream is = this.getClass().getResourceAsStream(path);
-			if (is != null) {
-				BufferedReader buf = new BufferedReader(new InputStreamReader(is));			
-				String line = buf.readLine();
-				while(line != null) {
-					sb.append(line + "\n");
-					line = buf.readLine();			
-				}
-				buf.close();
-			} else {
-				sb.append("{}");
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return sb.toString();
-	}
+//	public M fetch(M model) {
+//		
+//		getConfig().getMapper().updateModel(readClasspathFile("/tugmodel/tugmodel-config-defaults.json"), model);
+//		String customConfigRes = "tugmodel-config.json";
+//		Model customConfig;
+//		if (!resourceExists(customConfigRes)) {
+//			customConfigRes = "/tugmodel/tugmodel-config.json";
+//		}
+//		if (resourceExists(customConfigRes)) {
+//			customConfig = getConfig().getMapper().deserialize(readClasspathFile(customConfigRes));  // Model.class
+//			getConfig().getMapper().updateModel(customConfig, model);
+//		}	
+//		
+//		return model;
+//	}
+//
+//	public boolean resourceExists(String name) {
+//		return this.getClass().getResource(name) != null;
+//	}
+//	/**
+//	 * Reads a file from the classpath.
+//	 */
+//	public String readClasspathFile(String path) {
+//		// Take a look at https://github.com/spring-projects/spring-framework/blob/master/spring-core/src/main/java/org/springframework/core/io/support/PathMatchingResourcePatternResolver.java
+//		StringBuilder sb = new StringBuilder();
+//		try {
+//			InputStream is = this.getClass().getResourceAsStream(path);
+//			if (is != null) {
+//				BufferedReader buf = new BufferedReader(new InputStreamReader(is));			
+//				String line = buf.readLine();
+//				while(line != null) {
+//					sb.append(line + "\n");
+//					line = buf.readLine();			
+//				}
+//				buf.close();
+//			} else {
+//				sb.append("{}");
+//			}
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+//		}
+//		return sb.toString();
+//	}
 }

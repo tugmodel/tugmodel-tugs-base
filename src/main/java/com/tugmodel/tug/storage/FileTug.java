@@ -17,13 +17,13 @@ package com.tugmodel.tug.storage;
 import java.io.File;
 
 import com.tugmodel.client.model.Model;
-import com.tugmodel.client.tug.BaseTug;
+import com.tugmodel.client.tug.BaseCrudTug;
 
 /**
  * 
  *
  */
-public class FileTug<M extends Model> extends BaseTug<M> {
+public class FileTug<M extends Model> extends BaseCrudTug<M> {
 	protected File folder;
 	
 

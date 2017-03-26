@@ -15,16 +15,12 @@
 package com.tugmodel.tug.proxy;
 
 import com.tugmodel.client.model.Model;
-import com.tugmodel.client.tug.BaseTug;
+import com.tugmodel.client.tug.BaseCrudTug;
 
 /**
  * Wrapper tug used for stuff like error handling and delegation to proxied tug.
  */
-public class ProxyTug<M extends Model> extends BaseTug<M> {
+public class ProxyTug<M extends Model> extends BaseCrudTug<M> {
 
-	String proxiedTug;
-	
-	public String getProxiedTug() {
-		return proxiedTug;
-	}
+
 }

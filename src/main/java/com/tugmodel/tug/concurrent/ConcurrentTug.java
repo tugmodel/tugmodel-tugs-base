@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package src.main.java.com.tugmodel.tug.concurrent;
+package com.tugmodel.tug.concurrent;
 
 import com.tugmodel.client.model.Model;
 

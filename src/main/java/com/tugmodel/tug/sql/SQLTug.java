@@ -20,15 +20,17 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Map;
 
+import com.tugmodel.client.mapper.Mapper;
 import com.tugmodel.client.model.Model;
 import com.tugmodel.client.model.meta.Attribute;
 import com.tugmodel.client.model.meta.Meta;
-import com.tugmodel.client.tug.BaseTug;
+import com.tugmodel.client.tug.BaseCrudTug;
 
 /**
  * Wrapper tug used for stuff like error handling and delegation to proxied tug.
  */
-public class SQLTug<M extends Model> extends BaseTug<M> {
+@SuppressWarnings("all")
+public class SQLTug<M extends Model> extends BaseCrudTug<M> {
 
 	
 //	private createMisingTable(M model, Meta meta) {
@@ -93,12 +95,13 @@ public class SQLTug<M extends Model> extends BaseTug<M> {
 			int i = 1;
 			// Make sure getters are called and objects are serialized to the tug underlying format.
 			// TODO: try mapper.serialize.
-			Map values = this.getConfig().getMapper().convert(model, Map.class);
+			Mapper<Model> mr = this.getConfig().mapper();
+			Map values = mr.convert(model, Map.class);
 			for (Attribute a : meta.getAttributes()) {
 				ps.setObject(i++, values.get(a.getId()));				
 			}
 			Map extra = model.getExtraAttributes();
-			String extraAttrs = this.getConfig().getMapper().convert(extra, String.class);
+			String extraAttrs = ((Mapper<? extends Model>)this.getConfig().mapper()).convert(extra, String.class);
 			ps.setObject(i++, extraAttrs);
 			
 			int n = ps.executeUpdate();
