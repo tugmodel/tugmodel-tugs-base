@@ -24,7 +24,7 @@ import com.tugmodel.client.mapper.Mapper;
 import com.tugmodel.client.model.Model;
 import com.tugmodel.client.model.meta.Attribute;
 import com.tugmodel.client.model.meta.Meta;
-import com.tugmodel.client.tug.BaseCrudTug;
+import com.tugmodel.tug.base.BaseCrudTug;
 
 /**
  * Wrapper tug used for stuff like error handling and delegation to proxied tug.
@@ -95,13 +95,13 @@ public class SQLTug<M extends Model> extends BaseCrudTug<M> {
 			int i = 1;
 			// Make sure getters are called and objects are serialized to the tug underlying format.
 			// TODO: try mapper.serialize.
-			Mapper<Model> mr = this.getConfig().getMapper();
+            Mapper<Model> mr = this.getConfig().mapper();
 			Map values = mr.convert(model, Map.class);
 			for (Attribute a : meta.getAttributes()) {
 				ps.setObject(i++, values.get(a.getId()));				
 			}
-			Map extra = model.getExtraAttributes();
-			String extraAttrs = ((Mapper<? extends Model>)this.getConfig().getMapper()).convert(extra, String.class);
+			Map extra = model.extraFields();
+            String extraAttrs = this.getConfig().mapper().convert(extra, String.class);
 			ps.setObject(i++, extraAttrs);
 			
 			int n = ps.executeUpdate();

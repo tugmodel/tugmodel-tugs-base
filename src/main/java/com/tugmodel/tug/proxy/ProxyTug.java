@@ -15,7 +15,7 @@
 package com.tugmodel.tug.proxy;
 
 import com.tugmodel.client.model.Model;
-import com.tugmodel.client.tug.BaseCrudTug;
+import com.tugmodel.tug.base.BaseCrudTug;
 
 /**
  * Wrapper tug used for stuff like error handling and delegation to proxied tug.

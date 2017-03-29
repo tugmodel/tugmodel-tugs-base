@@ -32,12 +32,13 @@ import java.util.jar.JarFile;
 
 import com.tugmodel.client.model.Model;
 import com.tugmodel.client.model.list.ModelList;
-import com.tugmodel.client.tug.BaseCrudTug;
+import com.tugmodel.tug.base.BaseCrudTug;
 
 /**
- * A folder based tug. 
- * NOTE: The folder can be on the file system or within any JAR from the classpath.
- * A "path" parameter denoting the folder is expected in the configuration of the tug. 
+ * A handy tug that loads stuff from both classpath and folders on the disc.
+ * A "path" parameter denoting the folder is expected in the configuration of the tug :
+ *  - If the path is relative then a JAR (classpath) is tried.
+ *  - Else a file system folder is used. 
  */
 public class FolderBasedTug<M extends Model> extends BaseCrudTug<M> {
     public static final String KEY_PATH = "path";
@@ -179,7 +180,7 @@ public class FolderBasedTug<M extends Model> extends BaseCrudTug<M> {
         return res;
     }
 
-    public List<M> getAM(String like) {
+    public List<M> getModels(String like) {
         List<M> list = new ArrayList<M>();
         // Take a look at Spring PathMatchingResourcePatternResolver that has is more flexible.   
         
@@ -198,7 +199,7 @@ public class FolderBasedTug<M extends Model> extends BaseCrudTug<M> {
                 } else {
                     sb.append("{}");
                 }
-                M m = (M) getConfig().getMapper().deserialize(sb.toString());
+                M m = (M) getConfig().mapper().deserialize(sb.toString());
                 list.add(m);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -212,10 +213,10 @@ public class FolderBasedTug<M extends Model> extends BaseCrudTug<M> {
     @Override
     public List<M> fetch(ModelList<M> ml) {
         if (ml.isFetchAll()) {
-            return new ModelList<M>(getAM("*"));
+            return new ModelList<M>(getModels("*"));
         }
         if (ml.isFetchById()) {
-            return getAM((String) ml.getParams()[0]);
+            return getModels((String) ml.getParams()[0]);
         }
         return null;
     }

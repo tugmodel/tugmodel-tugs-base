@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 
 import com.tugmodel.client.model.Model;
-import com.tugmodel.client.model.config.TugConfig;
+import com.tugmodel.client.model.config.tugs.TugConfig;
 import com.tugmodel.client.tug.BusinessTug;
 
 import net.sf.cglib.proxy.Enhancer;
@@ -101,7 +101,7 @@ public class TestBusinessTug {
         proxy.enable(x, y);
 
         assertTrue(x.asBoolean("setByProxy") == true);
-        assertTrue(x.asInteger("x1") == 1);
+        assertTrue(x.asInt("x1") == 1);
 
     }
 }

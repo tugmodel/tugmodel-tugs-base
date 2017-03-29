@@ -17,7 +17,7 @@ package com.tugmodel.tug.file;
 import java.io.File;
 
 import com.tugmodel.client.model.Model;
-import com.tugmodel.client.tug.BaseCrudTug;
+import com.tugmodel.tug.base.BaseCrudTug;
 
 /**
  * 

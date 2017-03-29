@@ -15,7 +15,7 @@
 package com.tugmodel.tug.meta;
 
 import com.tugmodel.client.model.meta.Meta;
-import com.tugmodel.client.tug.BaseCrudTug;
+import com.tugmodel.tug.base.BaseCrudTug;
 
 /**
  * Provides metadata.

@@ -17,8 +17,7 @@ package com.tugmodel.tug.concurrent;
 import com.tugmodel.client.model.Model;
 
 /**
- * 
- *
+ * For running multiple tugs concurrently.
  */
 public class ConcurrentTug<M extends Model<M>> {
 	

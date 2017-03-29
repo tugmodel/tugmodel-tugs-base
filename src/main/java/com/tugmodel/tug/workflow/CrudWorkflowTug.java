@@ -15,12 +15,11 @@
 package com.tugmodel.tug.workflow;
 
 import com.tugmodel.client.model.Model;
-import com.tugmodel.client.tug.BaseCrudTug;
+import com.tugmodel.tug.base.BaseCrudTug;
 
 /**
- *
- *
+ * Crud workflow tug.
  */
-public class WorkflowTug<M extends Model> extends BaseCrudTug<M> {
+public class CrudWorkflowTug<M extends Model> extends BaseCrudTug<M> {
 	
 }
