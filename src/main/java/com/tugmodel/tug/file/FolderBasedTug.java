@@ -33,6 +33,8 @@ import java.util.jar.JarFile;
 import com.tugmodel.client.model.Model;
 import com.tugmodel.client.model.list.ModelList;
 import com.tugmodel.tug.base.BaseCrudTug;
+import com.tugmodel.tug.util.Clauses;
+import com.tugmodel.tug.util.Clauses.Clause;
 
 /**
  * A handy tug that loads stuff from both classpath and folders on the disc.
@@ -206,6 +208,15 @@ public class FolderBasedTug<M extends Model> extends BaseCrudTug<M> {
             }
 
         }
+        if ("*".equals(like)) {
+            for (M m : list) {
+                if (m.getId().equals(like)) {
+                    List<M> single = new ArrayList<M>();
+                    single.add(m);
+                    return single;
+                }
+            }
+        }
 
         return list;
     }
@@ -214,12 +225,22 @@ public class FolderBasedTug<M extends Model> extends BaseCrudTug<M> {
     public List<M> fetch(ModelList<M> ml) {
         if (ml.isFetchAll()) {
             return new ModelList<M>(getModels("*"));
-        }
-        if (ml.isFetchById()) {
+        } else if (ml.isFetchById()) {
             return getModels((String) ml.getParams()[0]);
+        } else if (ml.isWhere()) {
+            List<M> models = getModels("*");
+            List<M> valid = new ArrayList<M>();
+            for (M model : models) {
+                // Java 8 filter ;).
+                Clause clause = Clauses.getClause(ml.getWhere(), ml.getParams());
+                if (clause.validates(model))
+                    valid.add(model);
+            }
+            return valid;
         }
         return null;
     }
     
 
 }
+

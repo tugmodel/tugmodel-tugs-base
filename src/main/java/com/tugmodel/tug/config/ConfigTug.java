@@ -42,6 +42,7 @@ public class ConfigTug<M extends Model> extends BaseCrudTug<M> implements IConfi
     public ConfigTug() {
         // Direct setting of mapper. Not recommended.
         getConfig().mapper(JacksonMappers.getConfigReaderMapper());
+        getConfig().mapper().setTugConfig(null);
     }
 
     private Config cache;
@@ -51,61 +52,67 @@ public class ConfigTug<M extends Model> extends BaseCrudTug<M> implements IConfi
         return this;
     }
     public List<M> getModels(String like) {
-        List<Model> list = new ArrayList();
-        TugConfig tc = getConfig();
-        String type = tc.asString("type");
+        try {
+            List<Model> list = new ArrayList();
+            TugConfig tc = getConfig();
+            String type = tc.asString("type");
 
-        boolean mustCache = getConfig().get("cache", Boolean.class, false);
+            boolean mustCache = getConfig().get("cache", Boolean.class, false);
 
-        if (type.equals("all")) {
-            if (!mustCache || cache == null) {
-                // May need to use convert.
-                // Can not deserialize directly in Config because @c is not within string.
-                Model mm = tc.mapper().deserialize(readClasspathFile("/tugmodel/tugmodel-config-defaults.json")); // getConfig().mapper().toPrettyString(mm)
-                Config config = tc.mapper().convert(mm, Config.class);
+            if (type.equals("all")) {
+                if (!mustCache || cache == null) {
+                    // May need to use convert.
+                    Config config = tc.mapper()
+                            .deserialize(readClasspathFile("/tugmodel/tugmodel-config-defaults.json"), Config.class);
 
-                String customConfigRes = "tugmodel-config.json";
-                if (!resourceExists(customConfigRes)) {
-                    customConfigRes = "/tugmodel/tugmodel-config.json";
+                    String customConfigRes = "tugmodel-config.json";
+                    if (!resourceExists(customConfigRes)) {
+                        customConfigRes = "/tugmodel/tugmodel-config.json";
+                    }
+                    if (resourceExists(customConfigRes)) {
+                        // Model custom = tc.mapper().deserialize(readClasspathFile(customConfigRes)); // Model.class
+                        // Config customConfig = tc.mapper().convert(custom, Config.class);
+                        // config.merge(customConfig);
+                        Config customConfig = tc.mapper().deserialize(readClasspathFile(customConfigRes), Config.class);
+                        config.merge(customConfig);
+                    }
+                    if (mustCache) {
+                        cache = config;
+                    }
+                    list.add(config);
+                } else {
+                    list.add(cache);
                 }
-                if (resourceExists(customConfigRes)) {
-                    Model customConfig = tc.mapper().deserialize(readClasspathFile(customConfigRes)); // Model.class
-                    tc.mapper().updateModel(customConfig, config);
-                }
-                if (mustCache) {
-                    cache = config;
-                }
-                list.add(config);
             } else {
-                list.add(cache);
-            }
-        } else {
-            // Will need some caching setting for speed.
-            if (cache == null)
-                cache = new Config().setId("defaults").fetch();
-            if (type.equals("models")) {
-                list.addAll(cache.getModels());
-            } else if (type.equals("dataTypes")) {
-                list.addAll(cache.getDataTypes());
-            } else if (type.equals("tugs")) {
-                list.addAll(cache.getTugs());
-            } else if (type.equals("mappers")) {
-                list.addAll(cache.getMappers());
-            } else if (type.equals("tows")) {
-                list.addAll(cache.getTows());
-            }
-        }
-        List<M> r = (List) list;
-        if (!"*".equals(like)) {
-            r = new ArrayList();
-            for (Model m : list) {
-                if (m.getId().equals(like)) {
-                    // r.add((M) m.clone());
-                    r.add((M) m);
+                // Will need some caching setting for speed.
+                if (cache == null)
+                    cache = new Config().setId("defaults").fetch();
+                if (type.equals("models")) {
+                    list.addAll(cache.getModels());
+                } else if (type.equals("dataTypes")) {
+                    list.addAll(cache.getDataTypes());
+                } else if (type.equals("tugs")) {
+                    list.addAll(cache.getTugs());
+                } else if (type.equals("mappers")) {
+                    list.addAll(cache.getMappers());
+                } else if (type.equals("tows")) {
+                    list.addAll(cache.getTows());
                 }
             }
+            List<M> r = (List) list;
+            if (!"*".equals(like)) {
+                r = new ArrayList();
+                for (Model m : list) {
+                    if (m.getId().equals(like)) {
+                        // r.add((M) m.clone());
+                        r.add((M) m);
+                    }
+                }
+            }
+            return r;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load file config:" + e.getMessage(), e);
         }
-        return r;
     }
 
     public boolean resourceExists(String name) {
@@ -158,3 +165,4 @@ public class ConfigTug<M extends Model> extends BaseCrudTug<M> implements IConfi
         return null;
     }
 }
+

@@ -1,0 +1,14 @@
+{
+    "note1": "This is merged over the default ones in tugmodel-config-defaults.json.",
+    "id": "defaults",
+    "tows": [      
+        {
+            "id": "tm.tow.sample.Employee",
+            "modelId": "tm.sample.Employee",
+            "tug": {
+                "id": "tm.tug.base.folderBasedTug",
+                "path": "/employees"
+            }
+        }
+    ]
+}

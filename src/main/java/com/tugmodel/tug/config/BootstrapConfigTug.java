@@ -23,6 +23,7 @@ import com.tugmodel.client.mapper.Mapper;
 import com.tugmodel.client.model.Model;
 import com.tugmodel.mapper.jackson.JacksonMappers;
 
+
 /**
  * DO NOT USE. It is used only internally when loading config.
  */
@@ -36,7 +37,8 @@ public class BootstrapConfigTug<M extends Model> {
             customConfigRes = "/tugmodel/tugmodel-config.json";
         }
         if (resourceExists(customConfigRes)) {
-            mapper.updateModel(readClasspathFile(customConfigRes), model);
+            // mapper.updateModel(readClasspathFile(customConfigRes), model);
+            model.merge(mapper.deserialize(readClasspathFile(customConfigRes)));
         }
         return model;
     }

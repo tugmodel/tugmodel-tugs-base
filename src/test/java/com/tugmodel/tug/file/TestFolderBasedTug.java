@@ -31,6 +31,7 @@ public class TestFolderBasedTug {
     public void testNoStackOverflowOnPrettyPrint() throws URISyntaxException {
         ModelList<Employee> emps = Employee.s.fetchAll();
         Employee.s.getConfig().mapper().deserialize("{}");
+        Employee emp = (Employee) Employee.s.getConfig().mapper().deserialize("{}");
         String s = emps.tug().getConfig().toString();
     }
 
@@ -57,5 +58,14 @@ public class TestFolderBasedTug {
         ModelList<Employee> emps = Employee.s.fetchAll();
 
         assertTrue(emps.size() == 1);
+    }
+
+    @Test
+    public void testFetchByIdInJar() throws URISyntaxException {
+        File project = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
+                .getParentFile().getParentFile();
+
+        Employee.s.getConfig().set("path", "/employees");
+        assertTrue(Employee.s.fetchById("1").getName().equals("John"));
     }
 }

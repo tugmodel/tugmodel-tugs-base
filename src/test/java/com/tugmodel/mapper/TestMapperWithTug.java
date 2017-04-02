@@ -16,6 +16,7 @@ package com.tugmodel.mapper;
 
 import static junit.framework.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ import org.junit.Test;
 import com.tugmodel.client.mapper.Mapper;
 import com.tugmodel.client.model.Model;
 import com.tugmodel.client.model.config.Config;
+import com.tugmodel.client.model.config.tugs.TowConfig;
+import com.tugmodel.client.model.sample.Employee;
 import com.tugmodel.mapper.jackson.JacksonMappers;
 /**
  * 
@@ -41,5 +44,29 @@ public class TestMapperWithTug {
 
         Config config = mapper.convert(map, Config.class);
         assertTrue(config.getClass() == Config.class);
+    }
+
+    @Test
+    public void testPrettyPrintForChildren() {
+        Model m = new Model().set("x", 1).set("y", "1").set("z", null);
+        Model child = new Employee().set("c", 3);
+
+        // This will work because it has dedicated getters and setters for it.
+        Config config = new Config();
+        TowConfig tow = new TowConfig();
+        ArrayList list = new ArrayList();
+        list.add(tow);
+        config.setTows(list);
+        assertTrue(config.toString().contains(TowConfig.class.getCanonicalName()));
+
+        /**
+         * Mixin on Object adds "@c" also on arrays and maps which is ugly. On the other hand it creates the @c for the
+         * generic childs contained in model. The alternative solution would be adding @JsonSubTypes in at the Model
+         * level mixin or better add a mixin for each Model subclass. For the moment let's leave it as it is.
+         */
+        // Uncomment next when the above is fixed.
+        // m.set("child", child); // m.get("child")
+        // assertTrue(m.toString().contains(Employee.class.getCanonicalName()));
+
     }
 }

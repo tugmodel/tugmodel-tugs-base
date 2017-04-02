@@ -50,8 +50,8 @@ public class TestConfigTug {
         List<Meta> metas = Meta.s.fetchAll();
         assertTrue(metas.size() > 0);
 
-        Meta meta = Meta.s.fetchById("Model");
-        assertTrue(meta.getId().equals("Model"));
+        Meta meta = Meta.s.fetchById("tm.Model");
+        assertTrue(meta.getId().equals("tm.Model"));
         assertTrue(meta.getAttributes().size() > 0); // At least "id" atribute is present.
 
     }
@@ -61,7 +61,7 @@ public class TestConfigTug {
         Tug tug = TugFactory.getByTug(ConfigTug.class);
         assertTrue(tug != null);
 
-        Tug tug2 = TugFactory.getByModel("Config");
+        Tug tug2 = TugFactory.getByModel("tm.Config");
         assertTrue(tug2 != null);
 
         Tug tug3 = TugFactory.getByModel(Config.class);
@@ -86,7 +86,8 @@ public class TestConfigTug {
         Config config = new Config().setId("defaults").fetch();
         ConfigTug<Meta> tug = new ConfigTug<Meta>().workWith(config);
         tug.getConfig().set("type", "models");
-        Meta m = tug.where("id = ?", "Model").first();
-        assertTrue(m.getId().equals("Model"));
+        Meta m = tug.where("id = ?", "tm.Model").first();
+        assertTrue(m.getId().equals("tm.Model"));
     }
 }
+
